@@ -14,6 +14,10 @@ def main():
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     pygame.display.set_caption("Asteroids")
 
+    # FPS control setup
+    clock = pygame.time.Clock()
+    dt = 0  # delta time in seconds
+
     # Game loop
     running = True
     while running:
@@ -27,6 +31,9 @@ def main():
         # 3. Draw to screen
         screen.fill((0, 0, 0))  # Fill with black
         pygame.display.flip()    # Update the display
+
+        # Limit to 60 FPS and calculate delta time
+        dt = clock.tick(60) / 1000  # Convert milliseconds to seconds
 
     pygame.quit()
 
