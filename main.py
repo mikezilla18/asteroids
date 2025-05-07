@@ -1,49 +1,46 @@
 import pygame
 from constants import *
 from player import Player
+from asteroid import Asteroid
+from asteroidfield import AsteroidField
+
 
 def main():
     pygame.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    pygame.display.set_caption("Asteroids")
     clock = pygame.time.Clock()
-    
-    # Create groups
-    all_sprites = pygame.sprite.Group()
+
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
-    
-    # Create player and add to groups
-    player = Player(SCREEN_WIDTH//2, SCREEN_HEIGHT//2)
-    player.add(all_sprites, updatable, drawable)
-    
-    running = True
-    while running:
-        dt = clock.tick(60) / 1000
-        
+    asteroids = pygame.sprite.Group()
+
+    Asteroid.containers = (asteroids, updatable, drawable)
+    AsteroidField.containers = updatable
+    asteroid_field = AsteroidField()
+
+    Player.containers = (updatable, drawable)
+
+    player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
+
+    dt = 0
+
+    while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running = False
-        
-        # Update
+                return
+
         updatable.update(dt)
-        
-        # Screen wrapping
-        for sprite in updatable:
-            sprite.position.x %= SCREEN_WIDTH
-            sprite.position.y %= SCREEN_HEIGHT
-            sprite.rect.center = sprite.position
-        
-        # Draw
-        screen.fill((0, 0, 0))
-        for sprite in drawable:
-            sprite.draw(screen)
+
+        screen.fill("black")
+
+        for obj in drawable:
+            obj.draw(screen)
+
         pygame.display.flip()
-    
-    pygame.quit()
+
+        # limit the framerate to 60 FPS
+        dt = clock.tick(60) / 1000
+
 
 if __name__ == "__main__":
-    print("Starting Asteroids!")
-    print(f"Screen: {SCREEN_WIDTH}x{SCREEN_HEIGHT}")
-    print(f"Pygame v{pygame.version.ver}")
     main()
