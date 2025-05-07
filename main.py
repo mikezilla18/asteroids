@@ -1,6 +1,6 @@
 import pygame
 from constants import *
-from player import Player  # This import depends on the fixed constants.py
+from player import Player
 
 def main():
     pygame.init()
@@ -18,6 +18,14 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
         
+        # Update player (handles input and movement)
+        player.update(dt)
+        
+        # Keep player on screen
+        player.position.x = player.position.x % SCREEN_WIDTH
+        player.position.y = player.position.y % SCREEN_HEIGHT
+        
+        # Draw
         screen.fill((0, 0, 0))
         player.draw(screen)
         pygame.display.flip()
