@@ -1,6 +1,6 @@
 import pygame
 from constants import *
-from circleshape import CircleShape
+from player import Player  # This import depends on the fixed constants.py
 
 def main():
     pygame.init()
@@ -8,10 +8,7 @@ def main():
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     clock = pygame.time.Clock()
     
-    all_sprites = pygame.sprite.Group()
-    test_circle = CircleShape(SCREEN_WIDTH//2, SCREEN_HEIGHT//2, 30)
-    test_circle.velocity = pygame.Vector2(100, 100)
-    all_sprites.add(test_circle)
+    player = Player(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
     
     running = True
     while running:
@@ -21,16 +18,8 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
         
-        all_sprites.update(dt)
-        
-        # Bounce off edges
-        if test_circle.position.x < 0 or test_circle.position.x > SCREEN_WIDTH:
-            test_circle.velocity.x *= -1
-        if test_circle.position.y < 0 or test_circle.position.y > SCREEN_HEIGHT:
-            test_circle.velocity.y *= -1
-        
         screen.fill((0, 0, 0))
-        all_sprites.draw(screen)
+        player.draw(screen)
         pygame.display.flip()
     
     pygame.quit()
