@@ -6,14 +6,10 @@ class Player(CircleShape):
     def __init__(self, x, y):
         super().__init__(x, y, PLAYER_RADIUS)
         self.rotation = 0
-        # Ensure position is properly initialized
-        self.position = pygame.Vector2(x, y)
-        self.velocity = pygame.Vector2(0, 0)
         
     def move(self, dt, direction=1):
         forward = pygame.Vector2(0, -1).rotate(self.rotation)
-        self.position += forward * PLAYER_SPEED * dt * direction
-        self.rect.center = self.position  # Update rect position
+        self.velocity = forward * PLAYER_SPEED * direction
         
     def rotate(self, dt, direction=1):
         self.rotation += PLAYER_TURN_SPEED * dt * direction
@@ -21,6 +17,9 @@ class Player(CircleShape):
         
     def update(self, dt):
         keys = pygame.key.get_pressed()
+        
+        # Reset velocity each frame
+        self.velocity = pygame.Vector2(0, 0)
         
         if keys[pygame.K_a]: self.rotate(dt, -1)
         if keys[pygame.K_d]: self.rotate(dt, 1)
@@ -43,3 +42,5 @@ class Player(CircleShape):
         
     def draw(self, screen):
         pygame.draw.polygon(screen, "white", self.triangle(), 2)
+        # Draw debug circle
+        pygame.draw.circle(screen, (255, 0, 0), (int(self.position.x), int(self.position.y)), self.radius, 1)

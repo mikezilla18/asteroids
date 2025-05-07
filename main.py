@@ -8,8 +8,14 @@ def main():
     pygame.display.set_caption("Asteroids")
     clock = pygame.time.Clock()
     
-    # Create player directly (no groups for now)
+    # Create groups
+    all_sprites = pygame.sprite.Group()
+    updatable = pygame.sprite.Group()
+    drawable = pygame.sprite.Group()
+    
+    # Create player and add to groups
     player = Player(SCREEN_WIDTH//2, SCREEN_HEIGHT//2)
+    player.add(all_sprites, updatable, drawable)
     
     running = True
     while running:
@@ -19,16 +25,19 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
         
-        player.update(dt)
+        # Update
+        updatable.update(dt)
         
         # Screen wrapping
-        player.position.x %= SCREEN_WIDTH
-        player.position.y %= SCREEN_HEIGHT
-        player.rect.center = player.position  # Keep rect in sync
+        for sprite in updatable:
+            sprite.position.x %= SCREEN_WIDTH
+            sprite.position.y %= SCREEN_HEIGHT
+            sprite.rect.center = sprite.position
         
-        # Drawing
+        # Draw
         screen.fill((0, 0, 0))
-        player.draw(screen)  # Direct drawing
+        for sprite in drawable:
+            sprite.draw(screen)
         pygame.display.flip()
     
     pygame.quit()
