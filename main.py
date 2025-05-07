@@ -4,30 +4,31 @@ from player import Player
 
 def main():
     pygame.init()
-    pygame.display.set_caption("Asteroids")
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    pygame.display.set_caption("Asteroids")
     clock = pygame.time.Clock()
     
-    player = Player(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
+    # Create player directly (no groups for now)
+    player = Player(SCREEN_WIDTH//2, SCREEN_HEIGHT//2)
     
     running = True
     while running:
-        dt = clock.tick(60) / 1000.0
+        dt = clock.tick(60) / 1000
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
         
-        # Update player (handles input and movement)
         player.update(dt)
         
-        # Keep player on screen
-        player.position.x = player.position.x % SCREEN_WIDTH
-        player.position.y = player.position.y % SCREEN_HEIGHT
+        # Screen wrapping
+        player.position.x %= SCREEN_WIDTH
+        player.position.y %= SCREEN_HEIGHT
+        player.rect.center = player.position  # Keep rect in sync
         
-        # Draw
+        # Drawing
         screen.fill((0, 0, 0))
-        player.draw(screen)
+        player.draw(screen)  # Direct drawing
         pygame.display.flip()
     
     pygame.quit()
