@@ -1,15 +1,20 @@
 import pygame
 from circleshape import CircleShape
-from constants import PLAYER_RADIUS, PLAYER_TURN_SPEED, PLAYER_MOVE_SPEED
+from constants import PLAYER_RADIUS, PLAYER_TURN_SPEED, PLAYER_SPEED
 
 class Player(CircleShape):
     def __init__(self, x, y):
         super().__init__(x, y, PLAYER_RADIUS)
         self.rotation = 0  # 0 points upward
         
+    def move(self, dt, direction=1):
+        """Move the player in facing direction
+        direction: 1 for forward, -1 for backward"""
+        forward = pygame.Vector2(0, -1).rotate(self.rotation)  # Note: -1 for pygame's y-axis
+        self.position += forward * PLAYER_SPEED * dt * direction
+        
     def rotate(self, dt, direction=1):
-        """Rotate the player ship
-        direction: 1 for right, -1 for left"""
+        """Rotate the player ship"""
         self.rotation += PLAYER_TURN_SPEED * dt * direction
         self.rotation %= 360  # Keep rotation within 0-359 degrees
         
@@ -22,21 +27,14 @@ class Player(CircleShape):
         if keys[pygame.K_d]:  # Right (clockwise)
             self.rotate(dt, direction=1)
             
-        # Movement controls (we'll implement this next)
-        if keys[pygame.K_w] or keys[pygame.K_s]:
-            forward = pygame.Vector2(0, -1).rotate(self.rotation)
-            if keys[pygame.K_w]:  # Forward
-                self.velocity = forward * PLAYER_MOVE_SPEED
-            else:  # Backward
-                self.velocity = forward * -PLAYER_MOVE_SPEED
-        else:
-            self.velocity = pygame.Vector2(0, 0)
+        # Movement controls
+        if keys[pygame.K_w]:  # Forward
+            self.move(dt, direction=1)
+        if keys[pygame.K_s]:  # Backward
+            self.move(dt, direction=-1)
             
-        # Update position (handled by CircleShape parent class)
-        super().update(dt)
-        
     def triangle(self):
-        forward = pygame.Vector2(0, -1).rotate(self.rotation)  # Note: -1 for pygame's y-axis
+        forward = pygame.Vector2(0, -1).rotate(self.rotation)
         right = pygame.Vector2(0, -1).rotate(self.rotation + 90) * self.radius / 1.5
         a = self.position + forward * self.radius
         b = self.position - forward * self.radius - right
